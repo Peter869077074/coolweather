@@ -88,13 +88,20 @@ public class ChooseAreaFragment extends Fragment {
                    queryCounties();
                }else if (currentLevel == LEVEL_COUNTY){
                    String weatherId = countyList.get(position).getWeatherId();
+
+                   if (getActivity() instanceof MainActivity){
                    Intent intent = new Intent(getActivity(),WeatherActivity.class);
                    intent.putExtra("weather_id",weatherId);
                    startActivity(intent);
                    getActivity().finish();
-               }
+               }else if (getActivity() instanceof WeatherActivity){
+                       WeatherActivity activity = (WeatherActivity) getActivity();
+                       activity.drawerLayout.closeDrawers();
+                       activity.swipeRefresh.setRefreshing(true);
+                       activity.requestWeather(weatherId);
+                   }
            }
-       });
+       }});
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -107,6 +114,7 @@ public class ChooseAreaFragment extends Fragment {
         });
         queryProvinces();
     }
+
     //查询全国所有的省，优先从数据库查询，如果没有再到服务器去查
     private void queryProvinces(){
         titleText.setText("中国");
